@@ -5,7 +5,7 @@ OUTPUT=/tmp/build.out
 exec >> $OUTPUT
 
 #
-echo "Installed with Packer Image: ${local.ami_id}"
+echo "Installed with Packer Image: ${ami_id}"
 sudo apt-get update
 sudo apt install -y net-tools \
     ca-certificates \
@@ -18,8 +18,8 @@ sudo apt install -y net-tools \
 
 ROLE=boundary
 IP=$(curl -s 169.254.169.254/latest/meta-data/local-ipv4)
-ID=${count.index}
-HOSTNAME="boundary-server-${count.index}"
+ID=${count}
+HOSTNAME="boundary-server-${count}"
 echo $HOSTNAME > /etc/hostname
 hostname $HOSTNAME 
 
