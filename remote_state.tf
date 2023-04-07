@@ -5,7 +5,7 @@ data "terraform_remote_state" "vpc" {
   config = {
     organization = "demo-land"
     workspaces = {
-      name = "aws-boundary"
+      name = "aws-vpc"
     }
   }
 }
