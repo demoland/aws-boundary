@@ -1,6 +1,25 @@
-provider "boundary" {
-  addr                            = "http://127.0.0.1:9200"
-  auth_method_id                  = "ampw_1234567890"
-  password_auth_method_login_name = "admin"
-  password_auth_method_password   = "password"
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.74.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = local.region
+
+  default_tags {
+    tags = {
+      Owner       = "Daniel Fedick"
+      Purpose     = "DEMOLAND"
+      Terraform   = true
+      Environment = "development"
+      DoNotDelete = true
+      Name        = "DEMOLAND BOUNDARY"
+    }
+  }
+
 }
