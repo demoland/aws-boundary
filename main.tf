@@ -19,6 +19,7 @@ locals {
   region          = data.terraform_remote_state.vpc.outputs.region
   ssh_sg          = data.terraform_remote_state.vpc.outputs.ssh_sg
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
+  private_key     = base64decode(var.private_key)
 }
 
 resource "aws_instance" "boundary" {
@@ -33,47 +34,29 @@ resource "aws_instance" "boundary" {
   tags = {
     Name = "boundary-server-${count.index}"
   }
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = local.private_key
+    host        = self.private_ip
+  }
 
-  user_data = <<EOF
-#!/bin/bash
-#
-#
-#############################################
-[ -t <&0 ] || exec >> /tmp/build.out
+  #https://developer.hashicorp.com/terraform/language/resources/provisioners/connection
+  # Generate Init Script with variables
 
-echo "Installed with Packer Image: ${local.ami_id}"
-sudo apt-get update
-sudo apt install -y net-tools \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release \
-    unzip  \
-    docker-ce \
-    docker-ce-cli \
-    containerd.io
+  provisioner "file" {
+    content = templatefile("${path.module}/install/boundary-worker.sh.tpl", {
+      count = count.index
+      ami_id = local.ami_id
+    })
+    destination = "/tmp/boundary-worker.sh"
+  }
 
-cd /tmp
-
-### HOSTINFO ###
-
-ROLE=boundary
-IP=$(curl -s 169.254.169.254/latest/meta-data/local-ipv4)
-ID=${count.index}
-HOSTNAME="boundary-server-${count.index}"
-echo $HOSTNAME > /etc/hostname
-hostname $HOSTNAME 
-
-### HOSTINFO ###
-
-
-### INSTALL BOUNDARY ###
-
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install boundary
-
-### INSTALL BOUNDARY ###
-EOF
-
+  # Execute Init Script
+  provisioner "remote-exec" {
+    inline = [
+      "sudo chmod +x /tmp/boundary-worker.sh",
+      "/tmp/boundary-worker.sh",
+    ]
+  }
 }
