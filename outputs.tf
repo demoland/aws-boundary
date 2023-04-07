@@ -1,5 +1,5 @@
 output "boundary_endpoint" {
-    value = aws_instance.boundary.public_dns
+    value = aws_instance.boundary.public_dns[count.index]
     description = "The public DNS of the Boundary server" 
 }
 
