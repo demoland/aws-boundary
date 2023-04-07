@@ -8,7 +8,7 @@ resource "aws_security_group" "boundary" {
     from_port   = 9200
     to_port     = 9200
     protocol    = "TCP"
-    cidr_blocks = [var.my_ip]
+    cidr_blocks = [local.my_ip]
   }
 
   egress {
