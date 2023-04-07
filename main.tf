@@ -45,7 +45,7 @@ resource "aws_instance" "boundary" {
   # Generate Init Script with variables
 
   provisioner "file" {
-    content = templatefile("${path.module}/install/boundary-worker.sh.tpl", {
+    content = templatefile("./install/boundary-worker.sh.tpl", {
       count = count.index
       ami_id = local.ami_id
     })
