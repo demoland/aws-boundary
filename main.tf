@@ -14,6 +14,7 @@ locals {
   my_ip           = var.my_ip
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnet_ids
   public_subnet_0 = element(data.terraform_remote_state.vpc.outputs.public_subnet_ids, 0)
+  public_subnet_1 = element(data.terraform_remote_state.vpc.outputs.public_subnet_ids, 1)
   public_subnets  = data.terraform_remote_state.vpc.outputs.public_subnet_ids
   region          = data.terraform_remote_state.vpc.outputs.region
   ssh_sg          = data.terraform_remote_state.vpc.outputs.ssh_sg
