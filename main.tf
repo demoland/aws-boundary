@@ -13,10 +13,6 @@ locals {
   key_name        = data.terraform_remote_state.vpc.outputs.management_key
   my_ip           = var.my_ip
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnet_ids
-  public_subnet_0 = element(data.terraform_remote_state.vpc.outputs.public_subnet_ids, 0)
-  public_subnet_1 = element(data.terraform_remote_state.vpc.outputs.public_subnet_ids, 1)
-  public_subnet_2 = element(data.terraform_remote_state.vpc.outputs.public_subnet_ids, 2)
-  public_subnets  = data.terraform_remote_state.vpc.outputs.public_subnet_ids
   region          = data.terraform_remote_state.vpc.outputs.region
   ssh_sg          = data.terraform_remote_state.vpc.outputs.ssh_sg
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
@@ -33,8 +29,10 @@ resource "aws_instance" "boundary_controller" {
   key_name                    = local.key_name
   monitoring                  = true
   vpc_security_group_ids      = [aws_security_group.boundary_controller.id, local.ssh_sg]
-  subnet_id                   = element(local.public_subnets, count.index)
-  associate_public_ip_address = true
+  /*
+  We recommend placing all Boundary server's in private networks and using load balancing tecniques to expose services such as the API and administrative console to public networks. 
+  */
+  subnet_id                   = element(local.private_subnets, count.index)
   tags = {
     Name = "boundary-controller-${count.index}"
   }
