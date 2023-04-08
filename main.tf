@@ -26,8 +26,7 @@ locals {
 //https://developer.hashicorp.com/boundary/docs/getting-started/installing/production
 
 resource "aws_instance" "boundary_controller" {
-  //https://developer.hashicorp.com/terraform/language/meta-arguments/for_each
-  for_each                    = local.public_subnets
+  //https://developer.hashicorp.com/terraform/language/meta-arguments/count
   count                       = 3
   ami                         = local.ami_id
   instance_type               = "t3.medium"
