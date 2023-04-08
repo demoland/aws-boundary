@@ -1,5 +1,5 @@
-output "public_ips" {
-    value = aws_instance.boundary_controller.*.public_ip
+output "private_ips" {
+    value = aws_instance.boundary_controller.*.private_ip
     description = "The public DNS of the Boundary Controllers" 
 }
 
