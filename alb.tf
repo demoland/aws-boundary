@@ -10,6 +10,7 @@ resource "aws_lb_target_group" "boundary_controller_tg" {
   port        = 9200
   protocol    = "HTTP"
   target_type = "instance"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
   health_check {
     interval            = 30
