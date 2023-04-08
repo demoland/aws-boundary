@@ -3,7 +3,6 @@ output "private_ips" {
     description = "The public DNS of the Boundary Controllers" 
 }
 
-
 output "boundary_controller_lb" {
     value = aws_lb.boundary_controller_lb.dns_name
     description = "The public DNS of the Boundary Controllers" 
