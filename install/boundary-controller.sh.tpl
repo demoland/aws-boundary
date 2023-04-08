@@ -24,10 +24,9 @@ ID=${count}
 echo "COUNT: $ID"
 HOSTNAME="boundary-server-${count}"
 echo "Setting Hostname To: $HOSTNAME"
-echo $HOSTNAME > /etc/hostname
+hostnamectl set-hostname $HOSTNAME
+hostnamectl
 echo "Adding to /etc/hosts"
-echo $(hostname -I | awk '{print $1}') $HOSTNAME >> /etc/hosts
-hostname $HOSTNAME 
 
 ### HOSTINFO ###
 
