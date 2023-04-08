@@ -1,12 +1,12 @@
 resource "aws_lb" "boundary_controller_lb" {
-  name               = "boundary_controller-lb"
+  name               = "boundary_controller_lb"
   internal           = false
   load_balancer_type = "application"
   subnets            = local.public_subnets
 }
 
 resource "aws_lb_target_group" "boundary_controller_tg" {
-  name        = "boundary_controller-target-group"
+  name        = "boundary_controller_target_group"
   port        = 9200
   protocol    = "HTTP"
   target_type = "instance"
