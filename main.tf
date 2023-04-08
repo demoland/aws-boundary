@@ -28,16 +28,16 @@ locals {
 resource "aws_instance" "boundary_controller" {
   //https://developer.hashicorp.com/terraform/language/meta-arguments/for_each
   for_each                    = local.public_subnets
-  //count                       = 3
+  count                       = 3
   ami                         = local.ami_id
   instance_type               = "t3.medium"
   key_name                    = local.key_name
   monitoring                  = true
   vpc_security_group_ids      = [aws_security_group.boundary_controller.id, local.ssh_sg]
-  subnet_id                   = each.value
+  subnet_id                   = local.public_subnets[count.index]
   associate_public_ip_address = true
   tags = {
-    Name = "boundary-controller-${each.key}"
+    Name = "boundary-controller-${count.index}"
   }
   connection {
     type        = "ssh"
@@ -53,7 +53,7 @@ resource "aws_instance" "boundary_controller" {
     content = templatefile("./install/boundary-controller.sh.tpl",
       {
         ami_id = local.ami_id
-        count  = each.key
+        count  = count.index
       }
     )
     destination = "/tmp/boundary-controller.sh"
