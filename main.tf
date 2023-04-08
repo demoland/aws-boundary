@@ -26,16 +26,17 @@ locals {
 //https://developer.hashicorp.com/boundary/docs/getting-started/installing/production
 
 resource "aws_instance" "boundary_controller" {
-  count                       = 3
+  for_each                    = local.public_subnets
+  //count                       = 3
   ami                         = local.ami_id
   instance_type               = "t3.medium"
   key_name                    = local.key_name
   monitoring                  = true
   vpc_security_group_ids      = [aws_security_group.boundary_controller.id, local.ssh_sg]
-  subnet_id                   = local.public_subnets[count.index]
+  subnet_id                   = each.value
   associate_public_ip_address = true
   tags = {
-    Name = "boundary-controller-${count.index}"
+    Name = "boundary-controller-${each.key}"
   }
   connection {
     type        = "ssh"
@@ -51,7 +52,7 @@ resource "aws_instance" "boundary_controller" {
     content = templatefile("./install/boundary-controller.sh.tpl",
       {
         ami_id = local.ami_id
-        count  = count.index
+        count  = each.key
       }
     )
     destination = "/tmp/boundary-controller.sh"
