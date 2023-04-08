@@ -33,7 +33,7 @@ resource "aws_instance" "boundary_controller" {
   key_name                    = local.key_name
   monitoring                  = true
   vpc_security_group_ids      = [aws_security_group.boundary_controller.id, local.ssh_sg]
-  subnet_id                   = local.public_subnets[count.index]
+  subnet_id                   = element(local.public_subnets, count.index)
   associate_public_ip_address = true
   tags = {
     Name = "boundary-controller-${count.index}"
