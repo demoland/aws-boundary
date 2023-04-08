@@ -52,7 +52,6 @@ resource "aws_instance" "boundary_controller" {
       {
         ami_id     = local.ami_id
         count      = count.index
-        private_ip = self.private_ip
       }
     )
     destination = "/tmp/boundary-controller.sh"
@@ -71,6 +70,7 @@ resource "aws_instance" "boundary_controller" {
       {
         ami_id = local.ami_id
         count  = count.index
+        private_ip = self.private_ip
       }
     )
     destination = "/etc/boundary-controller.hcl"
