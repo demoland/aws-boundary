@@ -1,6 +1,6 @@
 output "boundary_endpoint" {
-    value = aws_instance.boundary.*.public_ip
-    description = "The public DNS of the Boundary server" 
+    value = aws_instance.boundary_controller.*.public_ip
+    description = "The public DNS of the Boundary Controllers" 
 }
 
 /*
