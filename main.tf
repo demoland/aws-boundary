@@ -50,18 +50,51 @@ resource "aws_instance" "boundary_controller" {
   provisioner "file" {
     content = templatefile("./install/boundary-controller.sh.tpl",
       {
-        ami_id = local.ami_id
-        count  = count.index
+        ami_id     = local.ami_id
+        count      = count.index
+        private_ip = self.private_ip
       }
     )
     destination = "/tmp/boundary-controller.sh"
   }
-
   # Execute Init Script
   provisioner "remote-exec" {
     inline = [
       "sudo chmod +x /tmp/boundary-controller.sh",
       "/tmp/boundary-controller.sh",
+    ]
+  }
+
+  # Place Boundary Configuration File
+  provisioner "file" {
+    content = templatefile("./install/boundary-controller.hcl.tpl",
+      {
+        ami_id = local.ami_id
+        count  = count.index
+      }
+    )
+    destination = "/etc/boundary-controller.hcl"
+  }
+
+  # Place Init Script
+  provisioner "file" {
+    content = templatefile("./install/boundary-controller.service.tpl",
+      {
+        name = "boundary"
+        type = "controller"
+      }
+    )
+    destination = "/etc/systemd/system/boundary-controller.service"
+  }
+
+  // Execute Init Script
+  // https://developer.hashicorp.com/boundary/docs/getting-started/installing/production
+  provisioner "remote-exec" {
+    inline = [
+      "sudo groupadd --system boundary",
+      "sudo useradd --system --gid boundary --home-dir /opt/boundary --no-create-home --shell /bin/false boundary",
+      "sudo chown boundary:boundary /etc/boundary-controller.hcl",
+      "sudo chown boundary:boundary /usr/local/bin/boundary",
     ]
   }
 }
