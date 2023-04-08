@@ -50,8 +50,8 @@ resource "aws_instance" "boundary_controller" {
   provisioner "file" {
     content = templatefile("./install/boundary-controller.sh.tpl",
       {
-        ami_id     = local.ami_id
-        count      = count.index
+        ami_id = local.ami_id
+        count  = count.index
       }
     )
     destination = "/tmp/boundary-controller.sh"
@@ -68,8 +68,8 @@ resource "aws_instance" "boundary_controller" {
   provisioner "file" {
     content = templatefile("./install/boundary-controller.hcl.tpl",
       {
-        ami_id = local.ami_id
-        count  = count.index
+        ami_id     = local.ami_id
+        count      = count.index
         private_ip = self.private_ip
       }
     )
