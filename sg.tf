@@ -1,6 +1,6 @@
-resource "aws_security_group" "boundary" {
-  name        = "boundary"
-  description = "Allow Boundary traffic to Personal IP"
+resource "aws_security_group" "boundary_controller" {
+  name        = "boundary_controller"
+  description = "Allow Boundary Controller traffic from client"
   vpc_id      = local.vpc_id
 
   ingress {
@@ -20,6 +20,6 @@ resource "aws_security_group" "boundary" {
   }
 
   tags = {
-    Name = "allow_boundary"
+    Name = "allow_boundary_client_connections"
   }
 }
