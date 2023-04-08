@@ -3,14 +3,8 @@ output "private_ips" {
     description = "The public DNS of the Boundary Controllers" 
 }
 
-/*
-output "boundary_auth_method_id" {
-    value = aws_instance.boundary.public_dns
-    description = "The public DNS of the Boundary server" 
-}
 
-output "boundary_auth_method_type" {
-    value = aws_instance.boundary.method_type
-    description = "The Boundary Auth Method Type"
+output "boundary_controller_lb" {
+    value = aws_lb.boundary_controller_lb.dns_name
+    description = "The public DNS of the Boundary Controllers" 
 }
-*/
