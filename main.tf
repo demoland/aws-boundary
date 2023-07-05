@@ -24,7 +24,7 @@ locals {
 
 resource "aws_instance" "boundary_controller" {
   //https://developer.hashicorp.com/terraform/language/meta-arguments/count
-  count                  = 3
+  count                  = 1
   ami                    = local.ami_id
   instance_type          = "t3.medium"
   key_name               = local.key_name
@@ -56,6 +56,7 @@ resource "aws_instance" "boundary_controller" {
     )
     destination = "/tmp/boundary-controller.sh"
   }
+
   # Execute Init Script
   provisioner "remote-exec" {
     inline = [
@@ -73,28 +74,17 @@ resource "aws_instance" "boundary_controller" {
         private_ip = self.private_ip
       }
     )
-    destination = "/etc/boundary-controller.hcl"
-  }
-
-  # Place Init Script
-  provisioner "file" {
-    content = templatefile("./install/boundary-controller.service.tpl",
-      {
-        name = "boundary"
-        type = "controller"
-      }
-    )
-    destination = "/etc/systemd/system/boundary-controller.service"
-  }
-
-  // Execute Init Script
-  // https://developer.hashicorp.com/boundary/docs/getting-started/installing/production
-  provisioner "remote-exec" {
-    inline = [
-      "sudo groupadd --system boundary",
-      "sudo useradd --system --gid boundary --home-dir /opt/boundary --no-create-home --shell /bin/false boundary",
-      "sudo chown boundary:boundary /etc/boundary-controller.hcl",
-      "sudo chown boundary:boundary /usr/local/bin/boundary",
-    ]
+    destination = "/etc/boundary.d/controller.hcl"
   }
 }
+
+#   // Execute Init Script
+#   // https://developer.hashicorp.com/boundary/docs/getting-started/installing/production
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo groupadd --system boundary",
+#       "sudo useradd --system --gid boundary --home-dir /opt/boundary --no-create-home --shell /bin/false boundary",
+#       "sudo chown boundary:boundary /etc/boundary-controller.hcl",
+#     ]
+#   }
+# }
